@@ -2,13 +2,15 @@ import { DifficultyBadge } from "@/components/DifficultyBadge";
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-10 bg-zinc-950 text-white">
-      <h1 className="text-2xl font-bold mb-6">Component Test: Difficulty Badge</h1>
+    <div>
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <p className="text-zinc-400 mb-8">Welcome to your DSA companion.</p>
+      
       <div className="flex gap-4">
         <DifficultyBadge type="Easy" />
         <DifficultyBadge type="Medium" />
         <DifficultyBadge type="Hard" />
       </div>
-    </main>
+    </div>
   );
 }
