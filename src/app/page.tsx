@@ -1,4 +1,5 @@
 import { ProblemCard } from "@/components/ProblemCard";
+import { AddProblemModal } from "@/components/AddProblemModal";
 import { Problem } from "@/types";
 
 const MOCK_PROBLEMS: Problem[] = [
@@ -25,9 +26,12 @@ const MOCK_PROBLEMS: Problem[] = [
 export default function Home() {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-zinc-400 mt-2">Welcome back! Here is your recent DSA progress.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+          <p className="text-zinc-400 mt-2">Welcome back! Here is your recent DSA progress.</p>
+        </div>
+        <AddProblemModal />
       </div>
 
       <section>
