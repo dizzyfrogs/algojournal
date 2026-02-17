@@ -30,14 +30,16 @@ export function ProblemCard({ problem }: ProblemCardProps) {
                 <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
                     {problem.notes || "Add your approach notes here..."}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                    {problem.tags.map(tag => (
-                        <div key={tag} className="flex items-center gap-1 text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300 border border-zinc-700">
-                            <Tag size={10} />
-                            {tag}
-                        </div>
-                    ))}
-                </div>
+                {problem.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        {problem.tags.map(tag => (
+                            <div key={tag} className="flex items-center gap-1 text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300 border border-zinc-700">
+                                <Tag size={10} />
+                                {tag}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
