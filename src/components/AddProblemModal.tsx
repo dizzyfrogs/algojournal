@@ -21,6 +21,19 @@ interface AddProblemModalProps {
     onAddProblem: (problem: Problem) => void;
 }
 
+// Standardized tag lists
+const FEATURED_TAGS = ["Array", "String", "Hash Table", "DP", "DFS", "BFS"];
+
+const ALL_TAGS = [
+    ...FEATURED_TAGS,
+    "Sorting", "Math", "Two Pointers", "Tree", "Binary Search", 
+    "Binary Tree", "Matrix", "Greedy", "Stack", "Design", "Heap", 
+    "Linked List", "Sliding Window", "Backtracking", "Bit Manipulation", 
+    "Prefix Sum", "Union Find", "Counting", "Graph Theory", "Simulation", 
+    "BST", "Recursion", "Divide and Conquer", "Trie", "Queue", 
+    "Topological Sort", "Monotonic Stack", "Shortest Path"
+];
+
 export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
@@ -28,6 +41,15 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
     const [notes, setNotes] = useState("");
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [showAllTags, setShowAllTags] = useState(false);
+
+    const displayedTags = showAllTags ? ALL_TAGS : FEATURED_TAGS;
+
+    const toggleTag = (tag: string) => {
+        setTags(prev => 
+            prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+        );
+    };
 
     const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && tagInput.trim()) {
@@ -77,7 +99,7 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                 <DialogHeader>
                     <DialogTitle>Log New Problem</DialogTitle>
                     <DialogDescription className="text-zinc-400">
-                        Add details about the problem you solved, your approach, and anything else you want to remember. This will be added to your journal.
+                        Add details about the problem you solved. This will be added to your journal.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -112,9 +134,34 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                     </div>
 
                     <div className="grid gap-2">
-                        <label className="text-sm font-medium">Tags</label>
-                        <div className="flex flex-wrap gap-2">
-                            {tags.map((tag) => (
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium">Tags</label>
+                            <button 
+                                type="button" 
+                                onClick={() => setShowAllTags(!showAllTags)}
+                                className="text-xs text-blue-400 hover:underline"
+                            >
+                                {showAllTags ? "Show Featured" : `+ ${ALL_TAGS.length - FEATURED_TAGS.length} more`}
+                            </button>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto pr-1">
+                            {displayedTags.map((tag) => {
+                                const isSelected = tags.includes(tag);
+                                return (
+                                    <Badge 
+                                        key={tag} 
+                                        variant={isSelected ? "default" : "outline"}
+                                        className={`cursor-pointer py-1 ${isSelected ? "bg-blue-600 hover:bg-blue-700" : "border-zinc-700 text-zinc-400"}`}
+                                        onClick={() => toggleTag(tag)}
+                                    >
+                                        {tag}
+                                    </Badge>
+                                );
+                            })}
+
+                            {/* Custom tags */}
+                            {tags.filter(t => !ALL_TAGS.includes(t)).map((tag) => (
                                 <Badge 
                                     key={tag} 
                                     variant="secondary" 
@@ -128,7 +175,7 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                                             e.stopPropagation();
                                             removeTag(tag);
                                         }}
-                                        className="ml-1 rounded-full outline-none hover:bg-zinc-700 p-0.5 transition-colors"
+                                        className="ml-1 rounded-full outline-none hover:bg-zinc-700 p-0.5"
                                     >
                                         <X size={12} className="text-zinc-400 hover:text-red-400" />
                                     </button>
@@ -136,11 +183,11 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                             ))}
                         </div>
                         <Input
-                            placeholder="Type tag and press Enter"
+                            placeholder="Add custom pattern..."
                             value={tagInput}
                             onChange={(e) => setTagInput(e.target.value)}
                             onKeyDown={handleAddTag}
-                            className="bg-zinc-950 border-zinc-800"
+                            className="bg-zinc-950 border-zinc-800 h-9 text-xs"
                         />
                     </div>
 
