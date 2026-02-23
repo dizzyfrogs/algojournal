@@ -14,9 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Difficulty } from "@/types";
+import { Difficulty, Problem } from "@/types";
 
-export function AddProblemModal() {
+interface AddProblemModalProps {
+    onAddProblem: (problem: Problem) => void;
+}
+
+export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
+    const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
     const [difficulty, setDifficulty] = useState<Difficulty>("Medium");
     const [notes, setNotes] = useState("");
@@ -24,17 +29,21 @@ export function AddProblemModal() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // log for now, will implement actual logic later
-        console.log({ 
-            name, 
-            difficulty, 
-            notes, 
-            dateSolved: new Date().toISOString(), 
-            tags: [] // handle tags later 
-        });
+        const newProblem: Problem = {
+            id: crypto.randomUUID(),
+            name,
+            difficulty,
+            notes,
+            dateSolved: new Date().toISOString(),
+            confidence: 3,
+            tags: [] // handle tags later
+        };
 
+        onAddProblem(newProblem);
+        
         setName("");
         setNotes("");
+        setOpen(false);
     };
 
     return (
