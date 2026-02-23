@@ -9,6 +9,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
+import { Badge } from "./ui/badge";
 
 interface ProblemCardProps {
   problem: Problem;
@@ -51,13 +52,14 @@ export function ProblemCard({ problem, onDelete }: ProblemCardProps) {
         {problem.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {problem.tags.map((tag) => (
-              <div 
+              <Badge 
                 key={tag} 
+                variant="outline"
                 className="flex items-center gap-1 text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300 border border-zinc-700"
               >
-                <Tag size={10} />
+                <Tag size={10} className="mr-1" />
                 {tag}
-              </div>
+              </Badge>
             ))}
           </div>
         )}
