@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PlusCircle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import {
     Dialog,
     DialogContent,
@@ -21,7 +22,6 @@ interface AddProblemModalProps {
     onAddProblem: (problem: Problem) => void;
 }
 
-// Standardized tag lists
 const FEATURED_TAGS = ["Array", "String", "Hash Table", "DP", "DFS", "BFS"];
 
 const ALL_TAGS = [
@@ -41,9 +41,20 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
     const [notes, setNotes] = useState("");
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [confidence, setConfidence] = useState<number>(3);
     const [showAllTags, setShowAllTags] = useState(false);
 
     const displayedTags = showAllTags ? ALL_TAGS : FEATURED_TAGS;
+
+    const getConfidenceText = (val: number) => {
+        const texts = ["Struggled", "Unsure", "Neutral", "Confident", "Mastered"];
+        return texts[val - 1];
+    };
+
+    const getConfidenceColor = (val: number) => {
+        const colors = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e"];
+        return colors[val - 1];
+    };
 
     const toggleTag = (tag: string) => {
         setTags(prev => 
@@ -67,23 +78,20 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const newProblem: Problem = {
+        onAddProblem({
             id: crypto.randomUUID(),
             name,
             difficulty,
             notes,
             dateSolved: new Date().toISOString(),
-            confidence: 3,
-            tags: tags
-        };
-
-        onAddProblem(newProblem);
-        
+            confidence,
+            tags
+        });
         setName("");
         setNotes("");
         setTags([]);
         setTagInput("");
+        setConfidence(3);
         setOpen(false);
     };
 
@@ -99,7 +107,7 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                 <DialogHeader>
                     <DialogTitle>Log New Problem</DialogTitle>
                     <DialogDescription className="text-zinc-400">
-                        Add details about the problem you solved. This will be added to your journal.
+                        Add details about the problem you solved.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -133,18 +141,30 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                         </div>
                     </div>
 
-                    <div className="grid gap-2">
+                    <div className="grid gap-4 py-2">
                         <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">Tags</label>
-                            <button 
-                                type="button" 
-                                onClick={() => setShowAllTags(!showAllTags)}
-                                className="text-xs text-blue-400 hover:underline"
+                            <label className="text-sm font-medium flex items-center gap-2">
+                                Confidence
+                            </label>
+                            <span 
+                                className="text-xs font-bold uppercase tracking-wider"
+                                style={{ color: getConfidenceColor(confidence) }}
                             >
-                                {showAllTags ? "Show Featured" : `+ ${ALL_TAGS.length - FEATURED_TAGS.length} more`}
-                            </button>
+                                {getConfidenceText(confidence)}
+                            </span>
                         </div>
-                        
+                        <Slider
+                            value={[confidence]}
+                            onValueChange={(vals) => setConfidence(vals[0])}
+                            max={5}
+                            min={1}
+                            step={1}
+                            className="py-4"
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Tags</label>
                         <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto pr-1">
                             {displayedTags.map((tag) => {
                                 const isSelected = tags.includes(tag);
@@ -159,28 +179,27 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
                                     </Badge>
                                 );
                             })}
-
-                            {/* Custom tags */}
                             {tags.filter(t => !ALL_TAGS.includes(t)).map((tag) => (
-                                <Badge 
-                                    key={tag} 
-                                    variant="secondary" 
-                                    className="gap-1 bg-zinc-800 text-zinc-200 py-1"
-                                >
+                                <Badge key={tag} variant="secondary" className="gap-1 bg-zinc-800 text-zinc-200 py-1">
                                     {tag}
                                     <button
                                         type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            removeTag(tag);
-                                        }}
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeTag(tag); }}
                                         className="ml-1 rounded-full outline-none hover:bg-zinc-700 p-0.5"
                                     >
                                         <X size={12} className="text-zinc-400 hover:text-red-400" />
                                     </button>
                                 </Badge>
                             ))}
+                        </div>
+                        <div className="flex justify-start">
+                            <button 
+                                type="button" 
+                                onClick={() => setShowAllTags(!showAllTags)}
+                                className="text-xs text-blue-400 hover:underline pt-1"
+                            >
+                                {showAllTags ? "Show Featured" : `+ ${ALL_TAGS.length - FEATURED_TAGS.length} more`}
+                            </button>
                         </div>
                         <Input
                             placeholder="Add custom pattern..."
