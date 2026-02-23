@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { LayoutDashboard, BookOpen, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, NotebookPen, BarChart3, Settings } from "lucide-react";
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/journal", label: "Journal", icon: BookOpen },
+    { href: "/journal", label: "Journal", icon: NotebookPen },
     { href: "/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/settings", label: "Settings", icon: Settings },
 ];
