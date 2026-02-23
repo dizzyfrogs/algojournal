@@ -44,7 +44,7 @@ export default function ProblemJournal() {
             <h1 className="text-4xl font-bold text-white">{problem.name}</h1>
             <div className="flex flex-wrap gap-2">
                 {problem.tags.map(tag => (
-                    <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-400">#{tag}</Badge>
+                    <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-400">{tag}</Badge>
                 ))}
             </div>
         </header>
