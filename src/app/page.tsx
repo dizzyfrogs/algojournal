@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
 import { ProblemCard } from "@/components/ProblemCard";
 import { AddProblemModal } from "@/components/AddProblemModal";
 import { Problem } from "@/types";
+import { ReviewModal } from "@/components/ReviewModal";
 
 export default function Home() {
-
   const [problems, setProblems] = useState<Problem[]>([]);
+  const [reviewingProblem, setReviewingProblem] = useState<Problem | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("problems");
@@ -23,8 +23,14 @@ export default function Home() {
     localStorage.setItem("problems", JSON.stringify(updated));
   };
 
-  const deleteProblem =  (id: string) => { 
+  const deleteProblem = (id: string) => { 
     const updated = problems.filter(p => p.id !== id);
+    setProblems(updated);
+    localStorage.setItem("problems", JSON.stringify(updated));
+  };
+
+  const handleSaveReview = (updatedProblem: Problem) => {
+    const updated = problems.map(p => p.id === updatedProblem.id ? updatedProblem : p);
     setProblems(updated);
     localStorage.setItem("problems", JSON.stringify(updated));
   };
@@ -60,6 +66,7 @@ export default function Home() {
                 key={problem.id} 
                 problem={problem} 
                 onDelete={deleteProblem} 
+                onReview={(id) => setReviewingProblem(problems.find(p => p.id === id) || null)}
               />
             ))}
           </div>
@@ -79,7 +86,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {problems.map((problem) => (
+            {recentSolves.map((problem) => (
               <ProblemCard 
                 key={problem.id} 
                 problem={problem} 
@@ -89,6 +96,13 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      <ReviewModal 
+        problem={reviewingProblem} 
+        open={!!reviewingProblem}
+        onOpenChange={(open) => !open && setReviewingProblem(null)}
+        onSaveReview={handleSaveReview}
+      />
     </div>
   );
 }

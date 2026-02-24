@@ -1,6 +1,6 @@
 import { Problem } from "@/types";
 import { DifficultyBadge } from "./DifficultyBadge";
-import { Calendar, Tag, Trash2 } from "lucide-react";
+import { Calendar, CheckCircle2, Tag, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
+import { on } from "events";
 
 interface ProblemCardProps {
   problem: Problem;
   onDelete: (id: string) => void;
+  onReview?: (id: string) => void;
 }
 
-export function ProblemCard({ problem, onDelete }: ProblemCardProps) {
+export function ProblemCard({ problem, onDelete, onReview }: ProblemCardProps) {
   return (
     <Link href={`/problem/${problem.id}`}>
       <Card className="bg-zinc-900 border-zinc-800 transition-all hover:border-zinc-700 shadow-md group">
@@ -32,8 +34,8 @@ export function ProblemCard({ problem, onDelete }: ProblemCardProps) {
             </CardDescription>
           </div>
           
-          <div className="flex items-center gap-2">
-            <DifficultyBadge type={problem.difficulty} />
+          <div className="flex items-center gap-2 ml-6">
+            <DifficultyBadge type={problem.difficulty} className="transition-transform duration-200 translate-x-10 group-hover:translate-x-0" />
             
             <Button
               variant="ghost"
@@ -46,8 +48,8 @@ export function ProblemCard({ problem, onDelete }: ProblemCardProps) {
           </div>
         </CardHeader>
         
-        <CardContent>
-          <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
+        <CardContent className="relative">
+          <p className="text-sm text-zinc-400 mb-4">
             {problem.notes || "No notes provided."}
           </p>
           
@@ -64,6 +66,21 @@ export function ProblemCard({ problem, onDelete }: ProblemCardProps) {
                 </Badge>
               ))}
             </div>
+          )}
+
+          {onReview && (
+            <Button
+              variant="default"
+              size="icon"
+              className="absolute bottom-0.5 right-6 h-10 w-10 bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onReview(problem.id);
+              }}
+            >
+              <CheckCircle2 size={20} />
+            </Button>
           )}
         </CardContent>
       </Card>
