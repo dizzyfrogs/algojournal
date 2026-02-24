@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Difficulty, Problem } from "@/types";
+import { calculateNextReview } from "@/lib/utils";
 
 interface AddProblemModalProps {
     onAddProblem: (problem: Problem) => void;
@@ -43,6 +44,7 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
     const [tags, setTags] = useState<string[]>([]);
     const [confidence, setConfidence] = useState<number>(3);
     const [showAllTags, setShowAllTags] = useState(false);
+    const [dateSolved, setDateSolved] = useState(new Date().toISOString().split("T")[0]);
 
     const displayedTags = showAllTags ? ALL_TAGS : FEATURED_TAGS;
 
@@ -77,13 +79,17 @@ export function AddProblemModal({ onAddProblem }: AddProblemModalProps) {
     };
 
     const handleSubmit = (e: React.FormEvent) => {
+        const actualSolveDate = new Date(dateSolved);
+        const nextReview = calculateNextReview(confidence, actualSolveDate);
+
         e.preventDefault();
         onAddProblem({
             id: crypto.randomUUID(),
             name,
             difficulty,
             notes,
-            dateSolved: new Date().toISOString(),
+            dateSolved: actualSolveDate.toISOString(),
+            nextReviewDate: nextReview,
             confidence,
             tags
         });

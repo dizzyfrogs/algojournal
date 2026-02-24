@@ -5,6 +5,7 @@ export interface Problem {
     name: string;
     difficulty: Difficulty;
     dateSolved: string;
+    nextReviewDate: string;
     notes: string;
     confidence: number;
     tags: string[];
