@@ -29,7 +29,14 @@ export default function Home() {
     localStorage.setItem("problems", JSON.stringify(updated));
   };
 
+  const today = new Date();
+  const reviewQueue = problems
+    .filter((p) => p.nextReviewDate && new Date(p.nextReviewDate) <= today)
+    .sort((a, b) => new Date(a.nextReviewDate).getTime() - new Date(b.nextReviewDate).getTime());
   
+  const recentSolves = problems
+    .filter((p) => !reviewQueue.find((rp) => rp.id === p.id))
+    .slice(0, 3);
 
   return (
     <div className="space-y-8">
@@ -40,6 +47,28 @@ export default function Home() {
         </div>
         <AddProblemModal onAddProblem={addProblem} />
       </div>
+
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 text-blue-400">
+          <h2 className="text-xl font-semibold">Due for Review</h2>
+        </div>
+
+        {reviewQueue.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviewQueue.map((problem) => (
+              <ProblemCard 
+                key={problem.id} 
+                problem={problem} 
+                onDelete={deleteProblem} 
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="p-10 border-2 border-dashed border-zinc-800 rounded-2xl text-center">
+            <p className="text-zinc-500">No problems due for review today. Great job!</p>
+          </div>
+        )}
+      </section>
 
       <section>
         <h2 className="text-xl font-semibold mb-4 text-zinc-200">Recent Solves</h2>
